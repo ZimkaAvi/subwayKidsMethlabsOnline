@@ -44,6 +44,7 @@ public class LobbyMenu : NetworkBehaviour
     public void StartGame()
     {
         //Μενÿεμ ρφενσ
+        NetworkManager.singleton.ServerChangeScene(sceneNames[selectedLevel]);
         
     }
 
