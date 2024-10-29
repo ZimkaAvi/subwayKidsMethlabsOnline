@@ -2286,6 +2286,7 @@ MonoBehaviour:
   joinMenu: {fileID: 1175853150}
   lobbyPrefab: {fileID: 1717551635778057907, guid: 271b8e6ed5dda7347814de1d96e04064, type: 3}
   networkManagerPrefab: {fileID: 4344743841842596829, guid: 912cdcfc14d97a64cb5792ac7351381e, type: 3}
+  useSteam: 0
 --- !u!4 &1800347873
 Transform:
   m_ObjectHideFlags: 0

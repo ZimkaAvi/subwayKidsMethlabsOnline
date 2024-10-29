@@ -6,30 +6,53 @@ using Steamworks;
 
 public class MainMenu : MonoBehaviour
 {
-    public static bool UseSteam { get; private set; } = false;
+    private static MainMenu instance;
+
     [SerializeField] GameObject landingPage, joinMenu, lobbyPrefab, networkManagerPrefab;
+    [SerializeField] private bool useSteam;
 
     Callback<LobbyCreated_t> lobbyCreated;
     Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
     Callback<LobbyEnter_t> lobbyEntered;
 
+    public static bool UseSteam { get { return instance.useSteam; } }
     public static CSteamID LobbyID { get; private set; }
+
+    private void Awake()
+    {
+        if(instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
 
     private void OnEnable()
     {
         //Подключаем коллбэки Steam
         if (!UseSteam) return;
+        lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
+        gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
+        lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
 
     }
 
     private void OnDisable()
     {
         if (!UseSteam && lobbyCreated == null) return;
+        lobbyEntered?.Dispose();
+        gameLobbyJoinRequested?.Dispose();
+        lobbyCreated?.Dispose();
     }
 
     //Действия при создании лобби
     void OnLobbyCreated(LobbyCreated_t callback)
     {
+
+
         if (!UseSteam) return;
         //Проверяет, успешность создания лоби
         if(callback.m_eResult != EResult.k_EResultOK)

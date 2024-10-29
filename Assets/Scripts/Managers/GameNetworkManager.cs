@@ -19,8 +19,14 @@ public class GameNetworkManager : NetworkManager
     
     public override void Awake()
     {
-        //Изменяем протокол передачи данных 
-        
+        if(MainMenu.UseSteam)
+        {
+            transport = GetComponent<FizzySteamworks>();
+        }
+        else
+        {
+            transport = GetComponent<KcpTransport>(); 
+        }
 
         base.Awake();
     }
@@ -39,7 +45,10 @@ public class GameNetworkManager : NetworkManager
             player.DisplayName = $"Player {conn.connectionId}";
         else
         {
-            
+            CSteamID steamID = SteamMatchmaking.GetLobbyMemberByIndex(MainMenu.LobbyID, numPlayers - 1);
+
+            player.SteamID = steamID.m_SteamID;
+
         }
     }
 

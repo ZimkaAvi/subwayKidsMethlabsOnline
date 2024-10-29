@@ -8,20 +8,36 @@ using Steamworks;
 
 public class PlayerNetworked : NetworkBehaviour
 {
-    //Перечисление для пунктов статистики
+    
     public enum E_Stats
     {
         Score,
         Death
     }
 
-    //Событие для оповещения об изменении информации о клиенте
+     
+   [SyncVar] ulong steamID;
+
+    public ulong SteamID 
+    {
+        get { return steamID; }
+
+        [Server]
+        set
+        {
+            steamID = value;
+            CSteamID cSteamID = new CSteamID(steamID);
+            DisplayName = SteamFriends.GetFriendPersonaName(cSteamID);
+        }
+
+    }
+   
     public static event Action<PlayerNetworked> ClientOnInfoUpdated;
 
-    //Словарь для хранения статистики( Ключ - значение из перечисления, Значение - целое число)
+   
     public SyncDictionary<E_Stats, int> Stats { get; } = new SyncDictionary<E_Stats, int>();
 
-    //Поле для хранения персонажа
+   
     [SyncVar]
     GameObject character;
     public GameObject Character
@@ -31,7 +47,7 @@ public class PlayerNetworked : NetworkBehaviour
         set { character = value; }
     }
 
-    //Поле для хранения имени игрока
+   
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))]
     string displayName;
     public string DisplayName
@@ -42,7 +58,6 @@ public class PlayerNetworked : NetworkBehaviour
     }
 
 
-    //Поле для хранения SteamID пользователя
 
     public override void OnStartServer()
     {
